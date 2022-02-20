@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shack15/customised_widgets/text/primary_text.dart';
 import '../screens/community/community.dart';
 import '../screens/events/events.dart';
 import '../screens/food_drink_tokens/food_drink_tokens.dart';
@@ -50,6 +51,7 @@ class _BottomState extends State<Bottom> {
         child: Scaffold(
       body: _screens.elementAt(_selectedIndex).screen,
       bottomNavigationBar: BottomNavigation(
+        screens: _screens,
         onTap: _onItemTapped,
         selectedIndex: _selectedIndex,
       ),
@@ -58,37 +60,22 @@ class _BottomState extends State<Bottom> {
 }
 
 class BottomNavigation extends StatelessWidget {
-  const BottomNavigation({Key? key, this.onTap, required this.selectedIndex})
+  const BottomNavigation(
+      {Key? key,
+      this.onTap,
+      required this.selectedIndex,
+      required this.screens})
       : super(key: key);
 
   final Function(int)? onTap;
   final int selectedIndex;
-  static final List<BottomScreen> _screens = [
-    BottomScreen(
-        title: 'NEWS',
-        screen: const News(),
-        icon: "assets/bottom_nav/news.png"),
-    BottomScreen(
-        title: "EVENTS",
-        screen: const Events(),
-        icon: "assets/bottom_nav/events.png"),
-    BottomScreen(
-        title: 'FOOD & DRINK & TOKENS',
-        screen: const FoodDrinkTokens(),
-        icon: "assets/bottom_nav/food_drink_tokens.png"),
-    BottomScreen(
-        title: 'ROOMS',
-        screen: const Rooms(),
-        icon: "assets/bottom_nav/rooms.png"),
-    BottomScreen(
-        title: 'COMMUNITY',
-        screen: const Community(),
-        icon: "assets/bottom_nav/community.png")
-  ];
+  final List<BottomScreen> screens;
 
   @override
   Widget build(BuildContext context) {
     return Container(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+        width: MediaQuery.of(context).size.width,
         decoration: const BoxDecoration(
             color: AppColors.secondary,
             border: Border(
@@ -96,48 +83,37 @@ class BottomNavigation extends StatelessWidget {
               color: AppColors.border,
               width: 1,
             ))),
-        child: BottomNavigationBar(
-            selectedLabelStyle: const TextStyle(overflow: TextOverflow.visible),
-            unselectedLabelStyle:
-                const TextStyle(overflow: TextOverflow.visible),
-            backgroundColor: AppColors.secondary,
-            currentIndex: selectedIndex,
-            elevation: 0,
-            showSelectedLabels: true,
-            showUnselectedLabels: true,
-            type: BottomNavigationBarType.fixed,
-            landscapeLayout: BottomNavigationBarLandscapeLayout.spread,
-            onTap: onTap,
-            selectedItemColor: AppColors.primary,
-            unselectedItemColor: AppColors.primary,
-            items: _screens
-                .map((e) => BottomNavigationBarItem(
-                    icon:
-                        // SizedBox(
-                        //   child: Column(
-                        //     mainAxisSize: MainAxisSize.min,
-                        //     crossAxisAlignment: CrossAxisAlignment.center,
-                        //     mainAxisAlignment: MainAxisAlignment.center,
-                        //     children: [
-                        Image.asset(
-                      e.icon,
-                      width: 35,
-                      height: 35,
-                      alignment: Alignment.centerLeft,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: screens
+              .map((e) => ConstrainedBox(
+                    constraints: BoxConstraints(
+                        maxWidth: MediaQuery.of(context).size.width /
+                            (screens.length - 1)),
+                    child: InkWell(
+                      onTap: () => onTap!(screens.indexOf(e)),
+                      child: Ink(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Image.asset(
+                              e.icon,
+                              width: 25,
+                              height: 25,
+                            ),
+                            PrimaryText(
+                              text: e.title,
+                              textAlign: TextAlign.center,
+                              size: 12,
+                            )
+                          ],
+                        ),
+                      ),
                     ),
-                    // PrimaryText(
-                    //   text: e.title,
-                    //   maxLines: 3,
-                    //   size: 12,
-                    //   textAlign: TextAlign.center,
-                    // ),
-                    //     ],
-                    //   ),
-                    // )
-                    // ,
-                    label: e.title,
-                    backgroundColor: AppColors.secondary))
-                .toList()));
+                  ))
+              .toList(),
+        ));
   }
 }
 
