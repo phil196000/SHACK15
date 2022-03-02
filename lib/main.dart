@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shack15/navigation/bottom_navigation.dart';
 import 'package:shack15/theme/colors.dart';
-
-import 'navigation/bottom.dart';
 
 void main() {
   runApp(const MyApp());
